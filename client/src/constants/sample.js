@@ -34,3 +34,5 @@ export const sampleNotifications = [{
         name: 'John boi',
     }
 }]
+
+

@@ -1,13 +1,14 @@
-import { Avatar, IconButton, ListItem, Stack, Typography} from '@mui/material';
+import { Avatar, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import React, { memo } from 'react'
+import { Remove as RemoveIcon } from '@mui/icons-material';
 
-const UserItem = ({ user, handler, handlerIsLoading }) => {
+const UserItem = ({ user, handler, handlerIsLoading, isAdded=false }) => {
     const { name, _id, avatar } = user;
     return (
         <ListItem>
             <Stack direction={"row"} alignItems={"center"} spacing={"1rem"} width={"100%"}>
-                <Avatar/>
+                <Avatar />
                 <Typography variant='body1' sx={{
                     flexGrow: 1,
                     display: "-webkit-box",
@@ -18,13 +19,16 @@ const UserItem = ({ user, handler, handlerIsLoading }) => {
                     width: '100%',
                 }}>{name}</Typography>
                 <IconButton size='small' sx={{
-                    bgcolor: 'primary.main',
+                    bgcolor: isAdded ? "error.main" : 'primary.main',
                     color: 'white',
                     '&:hover': {
-                        bgcolor: 'primary.dark'
+                        bgcolor: isAdded ? "error.dark" :'primary.dark'
                     }
-                }} onClick={()=> handler(_id)} disabled={handlerIsLoading}>
-                    <AddIcon/>
+                }} onClick={() => handler(_id)} disabled={handlerIsLoading}>
+
+                    {
+                        isAdded ? <RemoveIcon /> : <AddIcon />
+                    }
                 </IconButton>
             </Stack>
         </ListItem>
