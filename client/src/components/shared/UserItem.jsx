@@ -3,11 +3,11 @@ import AddIcon from '@mui/icons-material/Add';
 import React, { memo } from 'react'
 import { Remove as RemoveIcon } from '@mui/icons-material';
 
-const UserItem = ({ user, handler, handlerIsLoading, isAdded=false }) => {
+const UserItem = ({ user, handler, handlerIsLoading, isAdded=false, styling={} }) => {
     const { name, _id, avatar } = user;
     return (
         <ListItem>
-            <Stack direction={"row"} alignItems={"center"} spacing={"1rem"} width={"100%"}>
+            <Stack direction={"row"} alignItems={"center"} spacing={"1rem"} width={"100%"}  {...styling}>
                 <Avatar />
                 <Typography variant='body1' sx={{
                     flexGrow: 1,
