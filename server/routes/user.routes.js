@@ -28,7 +28,7 @@ app.post('/login', loginValidator(), validateHandler, login);
 
 app.use(isAuthenticated);
 //All the below routes are protected
-app.get('/profile', getMyProfile);
+app.get('/me', getMyProfile);
 
 app.get('/logout', logout); 
 

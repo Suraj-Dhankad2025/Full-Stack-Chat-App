@@ -6,8 +6,11 @@ import { ErrorHandler } from '../utils/utility.js';
 import { Chat } from '../models/chat.models.js';
 import { Request } from '../models/request.models.js';
 import { NEW_REQUEST, REFETCH_CHATS } from '../constants/events.js';
-const newUser = async (req, res, next) => {
+const newUser = TryCatch(async (req, res, next) => {
     const { name, username, password, bio } = req.body;
+    if(!req.file){
+        return next(new ErrorHandler("Please upload an avatar", 400));
+    }
     const avatar = {
         public_id: "abc",
         url: "abc",
@@ -22,7 +25,8 @@ const newUser = async (req, res, next) => {
     await User.create(user);
 
     sendToken(res, user, 201, 'User created successfully');
-};
+});
+
 const login = TryCatch(async (req, res, next) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username }).select('+password');
