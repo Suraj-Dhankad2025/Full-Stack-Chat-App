@@ -1,10 +1,12 @@
-import React, { lazy, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import axios from 'axios';
+import React, { lazy, Suspense, useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 import ProtectRoute from './components/auth/ProtectRoute';
 import { LayoutLoader } from './components/layout/Loaders';
-import { Suspense } from 'react';
-import axios from 'axios';
 import { server } from './constants/config';
+import { authState } from './recoil/atoms';
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Groups = lazy(() => import('./pages/Groups'));
@@ -15,18 +17,26 @@ const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
 const UserManagement = lazy(() => import('./pages/admin/UserManagement'));
 const ChatManagement = lazy(() => import('./pages/admin/ChatManagement'));
 const MessageManagement = lazy(() => import('./pages/admin/MessageManagement'));
-let user = true;
+
 
 const App = () => {
+  const [userAuth, setUserAuth] = useRecoilState(authState);
+  const { user,loader } = userAuth;
   useEffect(() => {
-      axios.get(`${server}/api/v1/user/me`)
-      .then(res => {
-        console.log(res)
+    axios.get(`${server}/api/v1/user/me`)
+    .then(res => {
+        console.log(user);
       }).catch(err => {
-        console.log(err)
+        setUserAuth(prevState => ({
+          ...prevState,
+          user: null,
+          loader: false,
+        }));
       })
   }, [])
-  return (
+  return loader ? (
+    <LayoutLoader/>
+  ) : (
     <Router>
      <Suspense fallback={<LayoutLoader/>}>
      <Routes>
@@ -48,6 +58,7 @@ const App = () => {
           <Route path='*' element={<NotFound/>}/>
       </Routes>
      </Suspense>
+      <Toaster position='bottom-center'/>
     </Router>
   )
 }

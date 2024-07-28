@@ -1,21 +1,27 @@
-import React, { useState } from 'react'
-import {
-    Container,
-    Paper,
-    Typography,
-    TextField,
-    Button,
-    Stack,
-    IconButton,
-    Avatar,
-} from '@mui/material'
-import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import { VisuallyHiddenInput } from '../components/styles/StyledComponents'
 import { useFileHandler, useInputValidation, useStrongPassword } from '6pp';
-import { usernameValidator } from '../utils/validators';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import {
+    Avatar,
+    Button,
+    Container,
+    IconButton,
+    Paper,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
+import axios from 'axios';
+import React, { useState } from 'react';
+import toast from 'react-hot-toast';
+import { useSetRecoilState } from 'recoil';
+import { VisuallyHiddenInput } from '../components/styles/StyledComponents';
 import { bgGradient } from '../constants/color';
-const Login = () => {
+import { server } from '../constants/config';
+import { authState } from '../recoil/atoms';
+import { usernameValidator } from '../utils/validators';
 
+const Login = () => {
+    const setUserAuth = useSetRecoilState(authState);
     const [isLogin, setIsLogin] = useState(true);
     const toggleLogin = () => {
         setIsLogin(!isLogin);
@@ -25,11 +31,54 @@ const Login = () => {
     const username = useInputValidation("", usernameValidator);
     const password = useStrongPassword();
     const avatar = useFileHandler("single");
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
+        const formData = new FormData();
+        formData.append('name', name.value);
+        formData.append('bio', bio.value);
+        formData.append('username', username.value);
+        formData.append('avatar', avatar.file);
+        formData.append('password', password.value);
+
+        try {
+            const data = await axios.post(`${server}/api/v1/user/new`, formData, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            setUserAuth((prevState) => ({
+                ...prevState,
+                user: true,
+            }))
+            toast.success(data?.data?.message || "User created successfully");
+        } catch (error) {
+            toast.error(error?.response?.data?.message || "An error occurred");
+        }
     }
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
+        const config = {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
+        try {
+            const { data } = await axios.post(`${server}/api/v1/user/login`, {
+                username: username.value,
+                password: password.value,
+            },{
+                config
+            })
+            setUserAuth((prevState) => ({   
+                ...prevState,
+                user: true,
+            }))
+            toast.success(data.message);
+        } catch (error) {
+            toast.error(error?.response?.data?.message || "An error occurred");
+        }
     }
     return (
         <div style={{

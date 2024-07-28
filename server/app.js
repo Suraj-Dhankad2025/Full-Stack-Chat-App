@@ -1,17 +1,18 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import { connectDB } from './utils/features.js';
-import { errorMiddleware } from './middlewares/error.middleware.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import userRoute from './routes/user.routes.js';
-import chatRoute from './routes/chat.routes.js';
-import adminRoute from './routes/admin.routes.js';
-import { Server } from 'socket.io';
+import {v2 as cloudinary} from 'cloudinary';
+import dotenv from 'dotenv';
+import express from 'express';
 import { createServer } from 'http';
-import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from './constants/events.js';
+import { Server } from 'socket.io';
 import { v4 as uuid } from 'uuid';
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from './constants/events.js';
+import { errorMiddleware } from './middlewares/error.middleware.js';
 import { Message } from './models/messages.models.js';
+import adminRoute from './routes/admin.routes.js';
+import chatRoute from './routes/chat.routes.js';
+import userRoute from './routes/user.routes.js';
+import { connectDB } from './utils/features.js';
 
 dotenv.config({
     path: './.env',
@@ -24,6 +25,11 @@ const adminSecretKey = process.env.ADMIN_SECRET_KEY || "admin123";
 const userSocketIDs = new Map();
 
 connectDB();
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 
 const app = express();
 const server = createServer(app);
@@ -92,4 +98,4 @@ server.listen(port, () => {
     console.log(`Server running on port ${port} in ${envMode} mode`);
 });
 
-export { adminSecretKey, envMode , userSocketIDs};
+export { adminSecretKey, envMode, userSocketIDs };
