@@ -15,7 +15,7 @@ import userRoute from './routes/user.routes.js';
 import { connectDB } from './utils/features.js';
 
 dotenv.config({
-    path: './.env',
+    path: './.env.local',
 });
 
 

@@ -2,7 +2,7 @@ import mongoose, { get } from "mongoose";
 import jwt from "jsonwebtoken";
 import { v4 as uuid } from "uuid";
 import { v2 as cloudinary } from "cloudinary";
-import { getBase64 } from "../lib/helper.lib";
+import { getBase64 } from "../lib/helper.lib.js";
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI)
