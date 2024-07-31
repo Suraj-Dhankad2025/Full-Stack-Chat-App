@@ -2,13 +2,13 @@ import { Avatar, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import React, { memo } from 'react'
 import { Remove as RemoveIcon } from '@mui/icons-material';
-
+import { transformImage } from '../../lib/features';
 const UserItem = ({ user, handler, handlerIsLoading, isAdded=false, styling={} }) => {
     const { name, _id, avatar } = user;
     return (
         <ListItem>
             <Stack direction={"row"} alignItems={"center"} spacing={"1rem"} width={"100%"}  {...styling}>
-                <Avatar />
+                <Avatar avatar={transformImage(avatar)} />
                 <Typography variant='body1' sx={{
                     flexGrow: 1,
                     display: "-webkit-box",

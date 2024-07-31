@@ -2,11 +2,11 @@ import axios from 'axios';
 import React, { lazy, Suspense, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
 import ProtectRoute from './components/auth/ProtectRoute';
 import { LayoutLoader } from './components/layout/Loaders';
 import { server } from './constants/config';
-import { authState } from './recoil/atoms';
+import { useDispatch, useSelector } from 'react-redux';
+import { userExists, userNotExists } from './redux/reducers/auth';
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Groups = lazy(() => import('./pages/Groups'));
@@ -20,23 +20,20 @@ const MessageManagement = lazy(() => import('./pages/admin/MessageManagement'));
 
 
 const App = () => {
-  const [userAuth, setUserAuth] = useRecoilState(authState);
-  const { user,loader } = userAuth;
+  const { user, loader } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  
   useEffect(() => {
-    axios.get(`${server}/api/v1/user/me`)
-    .then(res => {
-        console.log(user);
-      }).catch(err => {
-        setUserAuth(prevState => ({
-          ...prevState,
-          user: null,
-          loader: false,
-        }));
-      })
-  }, [])
+    axios
+      .get(`${server}/api/v1/user/me`, { withCredentials: true })
+      .then(({ data }) => dispatch(userExists(data.user)))
+      .catch((err) => dispatch(userNotExists()));
+  }, [dispatch]);
+
   return loader ? (
     <LayoutLoader/>
   ) : (
+
     <Router>
      <Suspense fallback={<LayoutLoader/>}>
      <Routes>

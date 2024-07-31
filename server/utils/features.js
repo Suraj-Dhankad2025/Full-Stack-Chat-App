@@ -25,7 +25,7 @@ const sendToken = async (res, user, code, message) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     return res.status(code).cookie('chat-token', token, cookieOptions).json({
         success: true,
-        message
+        message,
     });
 };
 

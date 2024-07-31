@@ -13,15 +13,16 @@ import {
 import axios from 'axios';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useSetRecoilState } from 'recoil';
 import { VisuallyHiddenInput } from '../components/styles/StyledComponents';
 import { bgGradient } from '../constants/color';
 import { server } from '../constants/config';
-import { authState } from '../recoil/atoms';
 import { usernameValidator } from '../utils/validators';
+import { useDispatch } from 'react-redux';
+import { userExists } from '../redux/reducers/auth';
+
 
 const Login = () => {
-    const setUserAuth = useSetRecoilState(authState);
+    const dispatch = useDispatch();
     const [isLogin, setIsLogin] = useState(true);
     const toggleLogin = () => {
         setIsLogin(!isLogin);
@@ -47,10 +48,7 @@ const Login = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            setUserAuth((prevState) => ({
-                ...prevState,
-                user: true,
-            }))
+            dispatch(userExists(data));
             toast.success(data?.data?.message || "User created successfully");
         } catch (error) {
             toast.error(error?.response?.data?.message || "An error occurred");
@@ -71,14 +69,12 @@ const Login = () => {
             },{
                 config
             })
-            setUserAuth((prevState) => ({   
-                ...prevState,
-                user: true,
-            }))
+            dispatch(userExists(data));
             toast.success(data.message);
         } catch (error) {
             toast.error(error?.response?.data?.message || "An error occurred");
         }
+
     }
     return (
         <div style={{
