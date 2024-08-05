@@ -7,6 +7,7 @@ import { LayoutLoader } from './components/layout/Loaders';
 import { server } from './constants/config';
 import { useDispatch, useSelector } from 'react-redux';
 import { userExists, userNotExists } from './redux/reducers/auth';
+import { SocketProvider } from './socket';
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Groups = lazy(() => import('./pages/Groups'));
@@ -26,7 +27,9 @@ const App = () => {
   useEffect(() => {
     axios
       .get(`${server}/api/v1/user/me`, { withCredentials: true })
-      .then(({ data }) => dispatch(userExists(data.user)))
+      .then(({ data }) => {
+        dispatch(userExists(data.user))
+      })
       .catch((err) => dispatch(userNotExists()));
   }, [dispatch]);
 
@@ -37,7 +40,11 @@ const App = () => {
     <Router>
      <Suspense fallback={<LayoutLoader/>}>
      <Routes>
-        <Route element={<ProtectRoute user={user} />}>
+        <Route element={
+        <SocketProvider>
+          <ProtectRoute user={user} />
+        </SocketProvider>
+        }>
           <Route path='/' element={<Home />} />
           <Route path="/groups" element={<Groups />} />
           <Route path="/chat/:chatId" element={<Chat />} />

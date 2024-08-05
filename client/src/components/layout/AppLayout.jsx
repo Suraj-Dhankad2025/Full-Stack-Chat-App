@@ -9,13 +9,14 @@ import Footer from "../shared/Footer";
 import ChatList from "../specific/ChatList";
 import Profile from "../specific/Profile";
 import Header from "./Header";
+import { getSocket } from "../../socket";
 
 const AppLayout = () => (WrappedComponent) => {
     return (props) => {
         const params = useParams();
         const chatId = params.chatId;
         const dispatch = useDispatch();
-        
+        const socket = getSocket();
         const { isMobileMenu } = useSelector((state) => state.misc);
         const { user } = useSelector((state) => state.auth);
         const { isLoading, data, isError, error, refetch } = useMyChatsQuery("");
@@ -57,7 +58,7 @@ const AppLayout = () => (WrappedComponent) => {
                         }
                     </Grid>
                     <Grid item xs={12} sm={8} md={5} lg={6} height={"100%"}>
-                        <WrappedComponent {...props} />
+                        <WrappedComponent {...props} chatId={chatId} user={user} />
                     </Grid>
                     <Grid item md={4} lg={3} height={"100%"} sx={{
                         display: { xs: "none", md: "block" },

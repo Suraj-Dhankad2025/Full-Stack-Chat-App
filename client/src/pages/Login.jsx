@@ -48,14 +48,16 @@ const Login = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            dispatch(userExists(data));
+            dispatch(userExists(data.user));
             toast.success(data?.data?.message || "User created successfully");
         } catch (error) {
             toast.error(error?.response?.data?.message || "An error occurred");
         }
+        window.location.href = '/';
     }
     const handleLogin = async (e) => {
         e.preventDefault();
+        const toastId = toast.loading("Logging In...");
         const config = {
             withCredentials: true,
             headers: {
@@ -66,15 +68,19 @@ const Login = () => {
             const { data } = await axios.post(`${server}/api/v1/user/login`, {
                 username: username.value,
                 password: password.value,
-            },{
+            },
                 config
-            })
-            dispatch(userExists(data));
-            toast.success(data.message);
+            )
+            dispatch(userExists(data.user));
+            toast.success(data.message, {
+                id: toastId,
+              });
         } catch (error) {
-            toast.error(error?.response?.data?.message || "An error occurred");
+            toast.error(error?.response?.data?.message || "Something Went Wrong", {
+                id: toastId,
+            });
         }
-
+        window.location.href = '/';
     }
     return (
         <div style={{

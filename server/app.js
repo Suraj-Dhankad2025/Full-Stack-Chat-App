@@ -9,10 +9,15 @@ import { v4 as uuid } from 'uuid';
 import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from './constants/events.js';
 import { errorMiddleware } from './middlewares/error.middleware.js';
 import { Message } from './models/messages.models.js';
+import { connectDB } from './utils/features.js';
+import { corsOptions } from './constants/config.js';
+import { socketAuthenticator } from './middlewares/auth.middleware.js';
+import { getSockets } from './lib/helper.lib.js';
+
 import adminRoute from './routes/admin.routes.js';
 import chatRoute from './routes/chat.routes.js';
 import userRoute from './routes/user.routes.js';
-import { connectDB } from './utils/features.js';
+
 
 dotenv.config({
     path: './.env.local',
@@ -33,14 +38,13 @@ cloudinary.config({
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server, {});
+const io = new Server(server, {
+    cors: corsOptions,
+});
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:4173", process.env.CLIENT_URL],
-    credentials: true,
-}));
+app.use(cors(corsOptions));
 
 
 app.use('/api/v1/user', userRoute);
@@ -51,12 +55,17 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-io.use((socket, next) => {});
+io.use((socket, next) => {
+    cookieParser()(
+        socket.request, 
+        socket.request.res, 
+        async(error)=>{
+        await socketAuthenticator(error, socket, next);
+    });
+});
+
 io.on('connection', (socket) => {
-    const user = {
-        _id:"aec",
-        name: "Admin",
-    }
+    const user = socket.user;
     userSocketIDs.set(user._id.toString(), socket.id);
     socket.on(NEW_MESSAGE, async ({chatId, members, message}) => {
         const messageForReatTime = {

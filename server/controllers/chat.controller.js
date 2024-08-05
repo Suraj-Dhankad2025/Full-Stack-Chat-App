@@ -4,7 +4,7 @@ import { TryCatch } from "../middlewares/error.middleware.js";
 import { Chat } from "../models/chat.models.js";
 import { Message } from "../models/messages.models.js";
 import { User } from "../models/user.models.js";
-import { deleteFilesFromCloudinary, emitEvent } from "../utils/features.js";
+import { deleteFilesFromCloudinary, emitEvent, uploadFilesToCloudinary } from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
 
 const newGroupChat = TryCatch(async (req, res, next) => {
@@ -189,7 +189,7 @@ const sendAttachments = TryCatch(async (req, res, next) => {
     if (files.length < 1) {
         return next(new ErrorHandler("Please provide attachments", 400));
     }
-    const attachments = [];
+    const attachments = await uploadFilesToCloudinary(files);
     const messageForRealTime = {
         content: "",
         attachments,
