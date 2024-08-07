@@ -23,11 +23,12 @@ import { userExists } from '../redux/reducers/auth';
 
 const Login = () => {
     const dispatch = useDispatch();
+    
     const [isLogin, setIsLogin] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
-    const toggleLogin = () => {
-        setIsLogin(!isLogin);
-    }
+
+    const toggleLogin = () => setIsLogin((prev) => !prev);
+
     const name = useInputValidation("");
     const bio = useInputValidation("");
     const username = useInputValidation("", usernameValidator);
@@ -43,26 +44,26 @@ const Login = () => {
         formData.append('username', username.value);
         formData.append('avatar', avatar.file);
         formData.append('password', password.value);
-
+        const config = {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        };
         try {
-            const data = await axios.post(`${server}/api/v1/user/new`, formData, {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            const data = await axios.post(`${server}/api/v1/user/new`, formData, config);
             dispatch(userExists(data.user));
-            toast.success(data?.data?.message || "User created successfully", {
+            toast.success(data.message, {
                 id: toastId,
             });
         } catch (error) {
-            toast.error(error?.response?.data?.message || "An error occurred", {
+            toast.error(error?.response?.data?.message || "Something Went Wrong", {
                 id: toastId,
             });
         } finally {
             setIsLoading(false);
         }
-        // window.location.href = '/';
+        window.location.href = '/';
     }
     const handleLogin = async (e) => {
         e.preventDefault();

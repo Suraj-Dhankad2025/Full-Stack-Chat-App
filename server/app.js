@@ -62,13 +62,13 @@ io.use((socket, next) => {
     cookieParser()(
         socket.request, 
         socket.request.res, 
-        async(error)=>{
-        await socketAuthenticator(error, socket, next);
-    });
+        async (error)=> await socketAuthenticator(error, socket, next)
+    );
 });
 
 io.on('connection', (socket) => {
     const user = socket.user;
+    console.log(user.name, "connected");
     userSocketIDs.set(user._id.toString(), socket.id);
     socket.on(NEW_MESSAGE, async ({chatId, members, message}) => {
         const messageForReatTime = {
@@ -117,7 +117,7 @@ io.on('connection', (socket) => {
         const membersSocket = getSockets(members);
         io.to(membersSocket).emit(ONLINE_USERS, Array.from(onlineUsers));
     });
-    socket.on('disconnect', (msg) => {
+    socket.on('disconnect', () => {
         console.log("user disconnected");
         userSocketIDs.delete(user._id.toString());
         onlineUsers.delete(user._id.toString());

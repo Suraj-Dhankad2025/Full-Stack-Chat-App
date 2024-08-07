@@ -22,8 +22,8 @@ const MessageManagement = lazy(() => import('./pages/admin/MessageManagement'));
 
 const App = () => {
   const { user, loader } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
   
+  const dispatch = useDispatch();
   useEffect(() => {
     axios
       .get(`${server}/api/v1/user/me`, { withCredentials: true })
@@ -50,15 +50,15 @@ const App = () => {
           <Route path="/chat/:chatId" element={<Chat />} />
         </Route>
         <Route path="/login" element={
-          <ProtectRoute user={!user}>
+          <ProtectRoute user={!user} redirect='/'>
             <Login />
           </ProtectRoute>} />
 
-          <Route path='/admin' element={<AdminLogin/>}></Route>
-          <Route path='/admin/dashboard' element={<Dashboard/>}></Route>
-          <Route path='/admin/users' element={<UserManagement/>}></Route>
-          <Route path='/admin/chats' element={<ChatManagement/>}></Route>
-          <Route path='/admin/messages' element={<MessageManagement/>}></Route>
+          <Route path='/admin' element={<AdminLogin/>}/>
+          <Route path='/admin/dashboard' element={<Dashboard/>}/>
+          <Route path='/admin/users' element={<UserManagement/>}/>
+          <Route path='/admin/chats' element={<ChatManagement/>}/>
+          <Route path='/admin/messages' element={<MessageManagement/>}/>
           <Route path='*' element={<NotFound/>}/>
       </Routes>
      </Suspense>
