@@ -1,4 +1,4 @@
-import { AppBar, Box, Typography, Toolbar, IconButton, Tooltip, Backdrop } from '@mui/material'
+import { AppBar, Box, Typography, Toolbar, IconButton, Tooltip, Backdrop, Badge } from '@mui/material'
 import React, { Suspense, useEffect } from 'react'
 import { orange } from '../../constants/color'
 import {
@@ -16,7 +16,8 @@ import { server } from '../../constants/config'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { userNotExists } from '../../redux/reducers/auth'
-import { setIsMobileMenu, setIsNotification, setIsSearch } from '../../redux/reducers/misc'
+import { setIsMobileMenu, setIsNewGroup, setIsNotification, setIsSearch } from '../../redux/reducers/misc'
+import { resetNotification } from '../../redux/reducers/chat'
 const Search = lazy(() => import('../specific/Search'));
 const NotificationDialog = lazy(() => import('../specific/Notifications'));
 const NewGroupDialog = lazy(() => import('../specific/NewGroup'));
@@ -24,21 +25,21 @@ const NewGroupDialog = lazy(() => import('../specific/NewGroup'));
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {isSearch, isNotification} = useSelector(state => state.misc);
-  
-  const [isNewGroup, setIsNewGroup] = useState(false);
- 
+  const { isSearch, isNotification, isNewGroup } = useSelector(state => state.misc);
+  const { notificationCount } = useSelector(state => state.chat);
 
   const handleMobile = () => dispatch(setIsMobileMenu(true));
-    
+
 
   const openSearch = () => dispatch(setIsSearch(true));
-    
+
   const openNewGroup = () => {
-    console.log('Mobile')
-    setIsNewGroup((prev) => !prev);
+    dispatch(setIsNewGroup(true));
   }
-  const openNotification = () => dispatch(setIsNotification(true));
+  const openNotification = () => {
+    dispatch(setIsNotification(true));
+    dispatch(resetNotification());
+  };
 
   const navigateToGroup = () => {
     navigate('/groups')
@@ -49,10 +50,10 @@ const Header = () => {
         {
           withCredentials: true
         })
-       dispatch(userNotExists());
+      dispatch(userNotExists());
       toast.success(data.message);
     } catch (error) {
-        toast.error(error?.response?.data?.message ||'Something went wrong');
+      toast.error(error?.response?.data?.message || 'Something went wrong');
     }
   }
 
@@ -78,7 +79,7 @@ const Header = () => {
               <IconBtn title={"Search"} icon={<SearchIcon />} onClick={openSearch} />
               <IconBtn title={"New Group"} icon={<AddIcon />} onClick={openNewGroup} />
               <IconBtn title={"Manage group"} icon={<GroupIcon />} onClick={navigateToGroup} />
-              <IconBtn title={"Notifications"} icon={<NotificationsIcon />} onClick={openNotification} />
+              <IconBtn title={"Notifications"} icon={<NotificationsIcon />} onClick={openNotification} value={notificationCount}/>
               <IconBtn title={"Logout"} icon={<LogoutIcon />} onClick={logoutHandler} />
             </Box>
           </Toolbar>
@@ -107,11 +108,17 @@ const Header = () => {
   )
 }
 
-const IconBtn = ({ title, icon, onClick }) => {
+const IconBtn = ({ title, icon, onClick, value }) => {
   return (
     <Tooltip title={title}>
       <IconButton color='inherit' size='large' onClick={onClick}>
-        {icon}
+        {value ? (
+          <Badge badgeContent={value} color='error'>
+            {icon}
+          </Badge>
+        ) : (
+          icon
+        )}
       </IconButton>
     </Tooltip>
   )

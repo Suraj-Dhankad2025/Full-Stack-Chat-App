@@ -1,7 +1,7 @@
 import { useInputValidation } from '6pp';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { Dialog, DialogTitle, InputAdornment, List, Stack, TextField } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAsyncMutation } from '../../hooks/hook';
 import { useLazySearchUserQuery, useSendFriendRequestMutation } from '../../redux/api/api';
