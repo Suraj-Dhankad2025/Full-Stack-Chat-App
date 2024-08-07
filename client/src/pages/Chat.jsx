@@ -8,7 +8,7 @@ import AppLayout from '../components/layout/Applayout';
 import MessageComponent from '../components/shared/MessageComponent';
 import { InputBox } from '../components/styles/StyledComponents';
 import { grayColor, orange } from '../constants/color';
-import { ALERT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../constants/events';
+import { ALERT, CHAT_JOINED, CHAT_LEFT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../constants/events';
 import { useErrors, useSocketEvents } from '../hooks/hook';
 import { useChatDetailsQuery, useGetMessagesQuery } from '../redux/api/api';
 import { removeNewMessagesAlert } from '../redux/reducers/chat';
@@ -75,17 +75,19 @@ const Chat = ({ chatId, user }) => {
     setFileMenuAnchor(e.currentTarget);
   }
   useEffect(() => {
+    socket.emit(CHAT_JOINED, {userId:user._id, members});
     dispatch(removeNewMessagesAlert(chatId));
     return () => {
       setMessages([]);
-      setOldMessages([]);
+      setOldMessages([]); 
       setPage(1);
       setMessage("");
+      socket.emit(CHAT_LEFT, {userId:user._id, members});
     }
   }, [chatId]);
 
   useEffect(() => {
-    if(bottomRef.current)
+    if(bottomRef.current)  
     bottomRef.current.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -111,9 +113,10 @@ const Chat = ({ chatId, user }) => {
     setUserTyping(false);
   }, [chatId]);
 
-  const alertListener = useCallback((content) => {
+  const alertListener = useCallback((data) => {
+    if(data.chatId !== chatId) return;
     const messageForAlert = {
-      content,
+      content:data.message,
       sender:{
         _id: Math.random(),
         name: "Admin",

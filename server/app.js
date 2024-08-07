@@ -6,7 +6,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { v4 as uuid } from 'uuid';
-import { NEW_MESSAGE, NEW_MESSAGE_ALERT, START_TYPING, STOP_TYPING } from './constants/events.js';
+import { CHAT_JOINED, CHAT_LEFT, NEW_MESSAGE, NEW_MESSAGE_ALERT, ONLINE_USERS, START_TYPING, STOP_TYPING } from './constants/events.js';
 import { errorMiddleware } from './middlewares/error.middleware.js';
 import { Message } from './models/messages.models.js';
 import { connectDB } from './utils/features.js';
@@ -28,6 +28,7 @@ const port = process.env.PORT || 3000;
 const envMode = process.env.NODE_ENV || 'DEVELOPMENT';
 const adminSecretKey = process.env.ADMIN_SECRET_KEY || "admin123";
 const userSocketIDs = new Map();
+const onlineUsers = new Set();
 
 connectDB();
 cloudinary.config({
@@ -95,20 +96,32 @@ io.on('connection', (socket) => {
         try {
             await Message.create(messageForDB);
         } catch (error) {
-            console.log(error);
+            throw new Error(error);
         }
     });
     socket.on(START_TYPING, ({members, chatId}) => {
         const membersSocket = getSockets(members);
         socket.to(membersSocket).emit(START_TYPING, {chatId});
     });
-    socket.on('STOP_TYPING', ({members, chatId}) => {
+    socket.on(STOP_TYPING, ({members, chatId}) => {
         const membersSocket = getSockets(members);
         socket.to(membersSocket).emit(STOP_TYPING, {chatId});
+    });
+    socket.on(CHAT_JOINED, ({userId, members}) => {
+        onlineUsers.add(userId.toString());
+        const membersSocket = getSockets(members);
+        io.to(membersSocket).emit(ONLINE_USERS, Array.from(onlineUsers));
+    });
+    socket.on(CHAT_LEFT, ({userId, members}) => {
+        onlineUsers.delete(userId.toString());
+        const membersSocket = getSockets(members);
+        io.to(membersSocket).emit(ONLINE_USERS, Array.from(onlineUsers));
     });
     socket.on('disconnect', (msg) => {
         console.log("user disconnected");
         userSocketIDs.delete(user._id.toString());
+        onlineUsers.delete(user._id.toString());
+        socket.broadcast.emit(ONLINE_USERS, Array.from(onlineUsers));
     })
 });
 app.use(errorMiddleware);

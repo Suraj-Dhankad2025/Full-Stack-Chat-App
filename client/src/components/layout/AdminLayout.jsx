@@ -1,18 +1,19 @@
-import React from 'react'
-import { Grid, Box, IconButton, Stack, Drawer, Typography, styled } from '@mui/material'
 import {
-    Close as CloseIcon, 
+    Close as CloseIcon,
     ExitToApp as ExitToAppIcon,
-    Groups as GroupsIcon, 
-    ManageAccounts as ManageAccountsIcon, 
+    Groups as GroupsIcon,
+    ManageAccounts as ManageAccountsIcon,
     Menu as MenuIcon,
     Message as MessageIcon
 } from '@mui/icons-material'
-import { useState } from 'react'
-import {useLocation, Link as LinkComponent, Navigate} from 'react-router-dom'
+import { Box, Drawer, Grid, IconButton, Stack, Typography, styled } from '@mui/material'
+import React, { useState } from 'react'
+import { Link as LinkComponent, Navigate, useLocation } from 'react-router-dom'
 
 import { Dashboard as DashboardIcon } from '@mui/icons-material'
+import { useDispatch, useSelector } from 'react-redux'
 import { matBlack } from '../../constants/color'
+import { adminLogout } from '../../redux/thunks/admin'
 
 const Link = styled(LinkComponent)`
     text-decoration:none;
@@ -47,8 +48,9 @@ const adminTabs = [
 ]
 const SideBar = ({w='100%'}) =>{
     const location = useLocation();
+    const dispatch = useDispatch();
     const logoutHandler = () =>{
-
+        dispatch(adminLogout());
     }
     return <Stack width={w} direction={'column'} padding={'3rem'} spacing={'3rem'}>
         <Typography variant={'h5'} textTransform={'uppercase'}>Admin</Typography>
@@ -82,8 +84,9 @@ const SideBar = ({w='100%'}) =>{
         </Stack>
     </Stack>
 }
-const isAdmin = true;
+
 const AdminLayout = ({children}) => {
+    const {isAdmin} = useSelector(state=>state.auth);
     const [isMobile, setIsMobile] = useState(false);
     const handleMobile = () =>{
         setIsMobile(!isMobile);
