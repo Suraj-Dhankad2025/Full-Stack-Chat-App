@@ -4,7 +4,6 @@ import { AttachFile as AttachFileIcon, Send as SendIcon } from '@mui/icons-mater
 import { IconButton, Skeleton, Stack } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import FileMenu from '../components/dialogs/FileMenu';
-import AppLayout from '../components/layout/Applayout';
 import MessageComponent from '../components/shared/MessageComponent';
 import { InputBox } from '../components/styles/StyledComponents';
 import { grayColor, orange } from '../constants/color';
@@ -16,6 +15,7 @@ import { setIsFileMenu } from '../redux/reducers/misc';
 import { getSocket } from '../socket';
 import { TypingLoader } from '../components/layout/Loaders';
 import { useNavigate } from 'react-router-dom';
+import AppLayout from '../components/layout/AppLayout';
 
 const Chat = ({ chatId, user }) => {
   const navigate = useNavigate();
