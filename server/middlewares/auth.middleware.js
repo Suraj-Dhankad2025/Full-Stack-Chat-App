@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { ErrorHandler } from "../utils/utility.js";
 import { adminSecretKey } from "../app.js";
 import { User } from "../models/user.models.js";
+import { CHAT_TOKEN } from "../constants/config.js";
 const isAdmin = TryCatch(async (req, res, next) => {
     const token = req.cookies["chat-admin-token"];
     if (!token) {
@@ -29,12 +30,16 @@ const isAuthenticated = TryCatch(async (req, res, next) => {
 const socketAuthenticator = async(error, socket, next) => {
     try {
         if(error) return next(error);
-        const authToken = socket.request.cookies["chat-token"];
+
+        const authToken = socket.request.cookies[CHAT_TOKEN];
+
         if(!authToken) return next(new ErrorHandler("Please login to access this route", 401));
+
         const decodeData = jwt.verify(authToken, process.env.JWT_SECRET);
-        const user = User.findById(decodeData._id);
+        const user = User.findById(decodeData.id);
         if(!user) return next(new ErrorHandler("Please login to access this route", 401));
         socket.user = user;
+
         return next();
     } catch (error) {
         return next(new ErrorHandler("Please login to access this route", 401));

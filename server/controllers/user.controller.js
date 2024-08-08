@@ -83,8 +83,8 @@ const sendRequest = TryCatch(async (req, res) => {
     const { userId } = req.body;
     const request = await Request.findOne({
         $or: [
-            { from: req.user, to: userId },
-            { from: userId, to: req.user },
+            { sender: req.user, receiver: userId },
+            { sender: userId, receiver: req.user },
         ],
     });
 
@@ -92,8 +92,8 @@ const sendRequest = TryCatch(async (req, res) => {
         return next(new ErrorHandler("Request already sent", 400));
     }
     await Request.create({
-        from: req.user,
-        to: userId,
+        sender: req.user,
+        receiver: userId,
     });
     emitEvent(req, NEW_REQUEST, [userId]);
     res.status(201).json({

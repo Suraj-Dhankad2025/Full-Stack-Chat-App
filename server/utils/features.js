@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { v4 as uuid } from "uuid";
 import { v2 as cloudinary } from "cloudinary";
 import { getBase64, getSockets } from "../lib/helper.lib.js";
+import { CHAT_TOKEN } from "../constants/config.js";
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI)
@@ -23,7 +24,7 @@ const cookieOptions = {
 }
 const sendToken = async (res, user, code, message) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    return res.status(code).cookie('chat-token', token, cookieOptions).json({
+    return res.status(code).cookie(CHAT_TOKEN, token, cookieOptions).json({
         success: true,
         user,
         message,

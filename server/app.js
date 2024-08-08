@@ -17,6 +17,7 @@ import { getSockets } from './lib/helper.lib.js';
 import adminRoute from './routes/admin.routes.js';
 import chatRoute from './routes/chat.routes.js';
 import userRoute from './routes/user.routes.js';
+import { User } from './models/user.models.js';
 
 
 dotenv.config({
@@ -66,9 +67,9 @@ io.use((socket, next) => {
     );
 });
 
-io.on('connection', (socket) => {
-    const user = socket.user;
-    console.log(user.name, "connected");
+io.on('connection', async (socket) => {
+    const userId = socket.user._conditions._id;
+    const user = await User.findById(userId);
     userSocketIDs.set(user._id.toString(), socket.id);
     socket.on(NEW_MESSAGE, async ({chatId, members, message}) => {
         const messageForReatTime = {

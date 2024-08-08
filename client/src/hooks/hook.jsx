@@ -5,11 +5,9 @@ const useErrors = (errors = []) => {
     useEffect(() => {
         errors.forEach(({ isError, error, fallback }) => {
             if (isError) {
-                if (fallback) {
-                    fallback();
-                }
+                if (fallback) fallback();
                 else {
-                    toast.error(error?.response?.data?.message || 'Something went wrong');
+                    toast.error(error?.data?.message || 'Something went wrong');
                 }
 
             }

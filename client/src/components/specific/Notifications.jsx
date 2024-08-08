@@ -30,7 +30,7 @@ const Notifications = () => {
         {isLoading ? <Skeleton/>:
         <>
           {
-            data?.allRequests.length > 0 ? (
+            data?.allRequests?.length > 0 ? (
               data?.allRequests?.map((i) =>
                 <NotificationItem
                   sender={i.sender}
