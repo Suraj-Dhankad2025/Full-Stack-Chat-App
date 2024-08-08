@@ -30,45 +30,45 @@ To set up the project locally, follow these steps:
    git clone https://github.com/YourUsername/QuickChat.git
    cd QuickChat
 
-
 2. **Install frontend dependencies:**
 
-```bash
-cd ../frontend
-npm install
+    ```bash
+    cd ../frontend
+    npm install
 
-3. Install backend dependencies
+3. **Install backend dependencies:**
     ```bash
     cd backend
     npm install
 
-4.	Set up environment variables:
+4.	**Set up environment variables:**
+    ***Create a .env file in the backend directory with the following variables:***
 
-Create a .env file in the backend directory with the following variables:
-MONGO_URI=<your_mongo_uri>
-PORT=<your_port>
-JWT_SECRET=<your_jwt_secret>
-ADMIN_SECRET_KEY=<your_admin_secret_key>
-NODE_ENV=<your_node_env>
-CLIENT_URL=<your_client_url>
-CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name>
-CLOUDINARY_API_KEY=<your_cloudinary_api_key>
-CLOUDINARY_API_SECRET=<your_cloudinary_api_secret>
+    ````bash
+    MONGO_URI=<your_mongo_uri>
+    PORT=<your_port>
+    JWT_SECRET=<your_jwt_secret>
+    ADMIN_SECRET_KEY=<your_admin_secret_key>
+    NODE_ENV=<your_node_env>
+    CLIENT_URL=<your_client_url>
+    CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name>
+    CLOUDINARY_API_KEY=<your_cloudinary_api_key>
+    CLOUDINARY_API_SECRET=<your_cloudinary_api_secret>
 
-4.	Start the backend server:
+4.	**Start the backend server:**
 
-cd backend
-npm start
-Usage
+    cd backend
+    npm start
+    Usage
 
-	•	Chat: Communicate in real-time with other users.
-	•	Authentication: Securely log in and out of your account.
-	•	File Sharing: Upload and share files within the chat.
+        •	Chat: Communicate in real-time with other users.
+        •	Authentication: Securely log in and out of your account.
+        •	File Sharing: Upload and share files within the chat.
 
-Contributing
+    Contributing
 
-Contributions are welcome! If you have any suggestions or find any issues, please open an issue or submit a pull request.
+    Contributions are welcome! If you have any suggestions or find any issues, please open an issue or submit a pull request.
 
-License
+    License
 
-This project is licensed under the MIT License.
+    This project is licensed under the MIT License.
