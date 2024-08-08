@@ -1,6 +1,7 @@
 # QuickChat
 
 A full-stack chat application built using modern web technologies like JavaScript, React.js, Node.js, Express.js, Socket.IO, React-Redux, and JWT. This application enables real-time, bi-directional communication with secure user authentication and an optimized user experience.
+<img width="1327" alt="Screenshot 2024-08-08 at 4 57 12 PM" src="https://github.com/user-attachments/assets/1ea6cf36-7917-4fdd-8c94-1b7456d4b63a">
 
 ## Technologies Used
 
@@ -32,7 +33,7 @@ To set up the project locally, follow these steps:
 cd backend
 npm install
 
-# Install frontend dependencies
+## Install frontend dependencies
 cd ../frontend
 npm install
 
@@ -48,11 +49,11 @@ CLOUDINARY_CLOUD_NAME =
 CLOUDINARY_API_KEY = 
 CLOUDINARY_API_SECRET = 
 
-# Start the backend server
+## Start the backend server
 cd backend
 npm start
 
-# Start the frontend server
+## Start the frontend server
 cd ../frontend
 npm run dev
 
