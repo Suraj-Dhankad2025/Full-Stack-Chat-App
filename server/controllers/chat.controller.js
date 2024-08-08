@@ -27,21 +27,24 @@ const newGroupChat = TryCatch(async (req, res, next) => {
 });
 
 const getMyChats = TryCatch(async (req, res, next) => {
-    const chats = await Chat.find({ members: req.user._id }).populate('members', 'name avatar');
-    const otherMember = getOtherMember(members, req.user);
+    const chats = await Chat.find({ members: req.user }).populate('members', 'name avatar');
+
     const transformedChats = chats.map(({ _id, name, members, groupChat }) => {
+        const otherMember = getOtherMember(members, req.user);
         return {
             _id,
             groupChat,
-            avatar: groupChat ? members.slice(0, 3).map(({ avatar }) => avatar.url) : [otherMember.avatar.url],
+            avatar: groupChat
+                ? members.slice(0, 3).map(({ avatar }) => avatar.url)
+                : [otherMember.avatar.url],
             name: groupChat ? name : otherMember.name,
-            members: members.reduce((acc, curr) => {
+            members: members.reduce((prev, curr) => {
                 if (curr._id.toString() !== req.user.toString()) {
-                    acc.push(curr._id);
+                    prev.push(curr._id);
                 }
-                return acc;
-            }, [])
-        }
+                return prev;
+            }, []),
+        };
     });
     return res.status(200).json({
         success: true,
@@ -131,11 +134,11 @@ const removeMember = TryCatch(async (req, res, next) => {
     );
     await chat.save();
     emitEvent(
-        req, 
-        ALERT, 
-        chat.members, 
+        req,
+        ALERT,
+        chat.members,
         {
-            message:`${userThatWillBeRemoved.name} has been removed from group`, 
+            message: `${userThatWillBeRemoved.name} has been removed from group`,
             chatId
         }
     );
@@ -172,9 +175,9 @@ const leaveGroup = TryCatch(async (req, res, next) => {
         chat.save()
     ]);
     emitEvent(
-        req, 
-        ALERT, 
-        chat.members, 
+        req,
+        ALERT,
+        chat.members,
         {
             message: `${user.name} has left the group`,
             chatId
@@ -190,10 +193,10 @@ const leaveGroup = TryCatch(async (req, res, next) => {
 const sendAttachments = TryCatch(async (req, res, next) => {
     const { chatId } = req.body;
     const files = req.files || [];
-    if(files.length < 1){
+    if (files.length < 1) {
         return next(new ErrorHandler("Please provide attachments", 400));
     }
-    if(files.length > 5){
+    if (files.length > 5) {
         return next(new ErrorHandler("You can only upload 5 files at a time", 400));
     }
     const [chat, me] = Promise.all([
@@ -329,7 +332,7 @@ const getMessages = TryCatch(async (req, res, next) => {
     const limit = 20;
     const skip = (page - 1) * limit;
 
-    const chat  = await Chat.findById(chatId);
+    const chat = await Chat.findById(chatId);
     if (!chat) {
         return next(new ErrorHandler("Chat not found", 404));
     }

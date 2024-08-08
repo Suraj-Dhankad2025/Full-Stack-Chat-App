@@ -79,7 +79,7 @@ const searchUser = TryCatch(async (req, res) => {
     });
 });
 
-const sendRequest = TryCatch(async (req, res) => {
+const sendRequest = TryCatch(async (req, res, next) => {
     const { userId } = req.body;
     const request = await Request.findOne({
         $or: [
@@ -96,13 +96,13 @@ const sendRequest = TryCatch(async (req, res) => {
         receiver: userId,
     });
     emitEvent(req, NEW_REQUEST, [userId]);
-    res.status(201).json({
+    res.status(200).json({
         success: true,
         data: "Friend request sent",
     });
 });
 
-const acceptRequest = TryCatch(async (req, res) => {
+const acceptRequest = TryCatch(async (req, res, next) => {
     const { requestId, accept } = req.body;
     const request = await Request.findById(requestId)
         .populate('sender', 'name')

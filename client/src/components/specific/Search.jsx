@@ -11,6 +11,8 @@ import UserItem from '../shared/UserItem';
 const Search = () => {
   const dispatch = useDispatch();
   const search = useInputValidation("");
+  const {user} = useSelector(state => state.auth);
+  const userId = user?._id;
   const {isSearch} = useSelector(state => state.misc);
   const [searchUser] = useLazySearchUserQuery();
   const [sendFriendRequest, isLoadingSendFriendRequest] = useAsyncMutation(useSendFriendRequestMutation);
@@ -47,7 +49,7 @@ const Search = () => {
         }}/>
         <List>
           {
-            users.map((user) => (
+            users.filter((user)=> user._id !== userId).map((user) => (
               <UserItem user={user} key={user._id} handler={addFriendHandler} handlerIsLoading={isLoadingSendFriendRequest}/>
             ))
           }

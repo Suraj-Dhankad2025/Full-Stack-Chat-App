@@ -1,10 +1,12 @@
 import { Avatar, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import React, { memo } from 'react'
+import React, { memo, useState } from 'react'
 import { Remove as RemoveIcon } from '@mui/icons-material';
 import { transformImage } from '../../lib/features';
 const UserItem = ({ user, handler, handlerIsLoading, isAdded=false, styling={} }) => {
     const { name, _id, avatar } = user;
+    const [isRequestSent, setIsRequestSent] = useState(false);
+    
     return (
         <ListItem>
             <Stack direction={"row"} alignItems={"center"} spacing={"1rem"} width={"100%"}  {...styling}>
@@ -24,7 +26,7 @@ const UserItem = ({ user, handler, handlerIsLoading, isAdded=false, styling={} }
                     '&:hover': {
                         bgcolor: isAdded ? "error.dark" :'primary.dark'
                     }
-                }} onClick={() => handler(_id)} disabled={handlerIsLoading}>
+                }} onClick={() => handler(_id)} disabled={handlerIsLoading || isRequestSent}>
 
                     {
                         isAdded ? <RemoveIcon /> : <AddIcon />
