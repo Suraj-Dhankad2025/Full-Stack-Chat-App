@@ -70,7 +70,7 @@ io.use((socket, next) => {
 io.on('connection', async (socket) => {
     const userId = socket.user._conditions._id;
     const user = await User.findById(userId);
-    userSocketIDs.set(user._id.toString(), socket.id);
+    userSocketIDs.set(user?._id?.toString(), socket.id);
     socket.on(NEW_MESSAGE, async ({chatId, members, message}) => {
         const messageForReatTime = {
             content:message,
@@ -120,8 +120,8 @@ io.on('connection', async (socket) => {
     });
     socket.on('disconnect', () => {
         console.log("user disconnected");
-        userSocketIDs.delete(user._id.toString());
-        onlineUsers.delete(user._id.toString());
+        userSocketIDs.delete(user?._id?.toString());
+        onlineUsers.delete(user?._id?.toString());
         socket.broadcast.emit(ONLINE_USERS, Array.from(onlineUsers));
     })
 });

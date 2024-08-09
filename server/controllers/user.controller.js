@@ -107,9 +107,12 @@ const acceptRequest = TryCatch(async (req, res, next) => {
     const request = await Request.findById(requestId)
         .populate('sender', 'name')
         .populate('receiver', 'name');
+
+    
     if (!request) {
         return next(new ErrorHandler("Request not found", 404));
     }
+    console.log(request);
     if (request.receiver._id.toString() !== req.user.toString()) {
         return next(new ErrorHandler("You are Unauthorized to accept this request", 401));
     }
@@ -146,7 +149,7 @@ const getMyNotifications = TryCatch(async (req, res) => {
         sender: {
             _id: sender._id,
             name: sender.name,
-            avatar: sender.avatar.url,
+            avatar: sender?.avatar?.url,
         }
     }));
     res.status(200).json({
@@ -166,7 +169,7 @@ const getMyFriends = TryCatch(async (req, res) => {
         return {
             _id: otherUsers._id,
             name: otherUsers.name,
-            avatar: otherUsers.avatar.url,
+            avatar: otherUsers?.avatar?.url,
         };
     });
     if(chatId){

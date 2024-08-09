@@ -35,8 +35,8 @@ const getMyChats = TryCatch(async (req, res, next) => {
             _id,
             groupChat,
             avatar: groupChat
-                ? members.slice(0, 3).map(({ avatar }) => avatar.url)
-                : [otherMember.avatar.url],
+                ? members.slice(0, 3).map(({ avatar }) => avatar?.url)
+                : [otherMember.avatar?.url],
             name: groupChat ? name : otherMember.name,
             members: members.reduce((prev, curr) => {
                 if (curr._id.toString() !== req.user.toString()) {
@@ -64,7 +64,7 @@ const getMyGroups = TryCatch(async (req, res, next) => {
             _id,
             groupChat,
             name,
-            avatar: members.slice(0, 3).map(({ avatar }) => avatar.url),
+            avatar: members.slice(0, 3).map(({ avatar }) => avatar?.url),
         }
     });
     return res.status(200).json({
@@ -249,7 +249,7 @@ const getChatDetails = TryCatch(async (req, res, next) => {
         chat.members = chat.members.map(({ _id, name, avatar }) => ({
             _id,
             name,
-            avatar: avatar.url
+            avatar: avatar?.url
         }));
         return res.status(200).json({
             success: true,

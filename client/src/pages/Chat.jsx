@@ -52,18 +52,18 @@ const Chat = ({ chatId, user }) => {
 
   const messageOnChange = (e) => {
     setMessage(e.target.value);
-    if(!IAmTyping) {
+    if (!IAmTyping) {
       socket.emit(START_TYPING, { members, chatId });
       setIAmTyping(true);
-    } 
-    if(typingTimeout.current) {
+    }
+    if (typingTimeout.current) {
       clearTimeout(typingTimeout.current);
     }
     typingTimeout.current = setTimeout(() => {
       socket.emit(STOP_TYPING, { members, chatId });
       setIAmTyping(false);
     }, 2000);
-  } 
+  }
   const submitHandler = (e) => {
     e.preventDefault();
     if (!message.trim()) return;
@@ -75,24 +75,24 @@ const Chat = ({ chatId, user }) => {
     setFileMenuAnchor(e.currentTarget);
   }
   useEffect(() => {
-    socket.emit(CHAT_JOINED, {userId:user._id, members});
+    socket.emit(CHAT_JOINED, { userId: user._id, members });
     dispatch(removeNewMessagesAlert(chatId));
     return () => {
       setMessages([]);
-      setOldMessages([]); 
+      setOldMessages([]);
       setPage(1);
       setMessage("");
-      socket.emit(CHAT_LEFT, {userId:user._id, members});
+      socket.emit(CHAT_LEFT, { userId: user._id, members });
     }
   }, [chatId]);
 
   useEffect(() => {
-    if(bottomRef.current)  
-    bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    if (bottomRef.current)
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
-    if(chatDetails.isError) {
+    if (chatDetails.isError) {
       return navigate("/");
     }
   }, [chatDetails.isError]);
@@ -114,11 +114,11 @@ const Chat = ({ chatId, user }) => {
   }, [chatId]);
 
   const alertListener = useCallback((data) => {
-    if(data.chatId !== chatId) return;
+    if (data.chatId !== chatId) return;
     const messageForAlert = {
-      content:data.message,
-      sender:{
-        _id: Math.random(),
+      content: data.message,
+      sender: {
+        _id: "djasdhajksdhasdsadasdas",
         name: "Admin",
       },
       chat: chatId,
@@ -127,18 +127,18 @@ const Chat = ({ chatId, user }) => {
     setMessages((prev) => [...prev, messageForAlert]);
   }, [chatId]);
 
-  const eventHandlers = { 
+  const eventHandlers = {
     [NEW_MESSAGE]: alertListener,
     [ALERT]: newMessagesListener,
     [START_TYPING]: startTypingListener,
     [STOP_TYPING]: stopTypingListener,
-   };
+  };
   useSocketEvents(socket, eventHandlers);
 
   useErrors(errors);
 
   const allMessages = [...oldMessages, ...messages];
-
+  console.log(allMessages);
   return chatDetails.isLoading ? <Skeleton /> : (
     <Fragment>
       <Stack
@@ -155,12 +155,12 @@ const Chat = ({ chatId, user }) => {
       >
         {
           allMessages.map((i) => (
-            <MessageComponent key={i._id} message={i} user={user} />
+            <MessageComponent key={i._id}  message={i} user={user} />
           ))
         }
-        {userTyping && <TypingLoader/>}
+        {userTyping && <TypingLoader />}
 
-        <div ref={bottomRef}/>
+        <div ref={bottomRef} />
       </Stack>
       <form style={{
         height: "10%",
@@ -186,7 +186,6 @@ const Chat = ({ chatId, user }) => {
             "&:hover": {
               bgcolor: "error.dark",
             },
-
           }}>
             <SendIcon />
           </IconButton>

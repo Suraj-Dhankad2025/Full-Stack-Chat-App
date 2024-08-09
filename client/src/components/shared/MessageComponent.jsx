@@ -5,7 +5,7 @@ import moment from 'moment';
 import { fileFormat } from '../../lib/features';
 import RenderAttachment from './RenderAttachment';
 import {motion} from 'framer-motion';
-const MessageComponent = ({message, user}) => {
+const MessageComponent = ({ message, user}) => {
     const {sender, content, attachments = [], createdAt} = message;
     const sameSender = sender?._id===user?._id
     const timeAgo = moment(createdAt).fromNow();

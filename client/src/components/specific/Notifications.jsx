@@ -19,23 +19,25 @@ const Notifications = () => {
   }
   const closeHandler = () => dispatch(setIsNotification(false));
 
-  useErrors([{error, isError}])
+  useErrors([{error, isError}]);
 
   return (
     <Dialog open={isNotification} onClose={closeHandler}>
-      <Stack p={{ xs: "1rem", sm: "2rem" }} maxWidth={"25rem"}>
+      <Stack p={{ xs: "1rem", sm: "2rem" }} maxWidth={"50rem"}>
         <DialogTitle>
           Notifications
         </DialogTitle>
         {isLoading ? <Skeleton/>:
         <>
-          {
-            data?.allRequests?.length > 0 ? (
-              data?.allRequests?.map((i) =>
+          { 
+            data?.allRequest.length > 0 ? (
+              data?.allRequest?.map(({sender, _id}) =>
                 <NotificationItem
-                  sender={i.sender}
-                  _id={i._id}
-                  handler={friendRequestHandler} />)
+                  sender={sender}
+                  _id={_id}
+                  handler={friendRequestHandler} 
+                  key={_id}
+                  />)
             ) : (<Typography textAlign={"center"}>0 notifications</Typography>)
           }
         </>
@@ -48,11 +50,10 @@ const Notifications = () => {
 
 const NotificationItem = memo(({ sender, _id, handler }) => {
   const { name, avatar } = sender;
-
   return (
     <ListItem>
       <Stack direction={"row"} alignItems={"center"} spacing={"1rem"} width={"100%"}>
-        <Avatar />
+        <Avatar  src={avatar}/>
         <Typography variant='body1' sx={{
           flexGrow: 1,
           display: "-webkit-box",
