@@ -99,7 +99,6 @@ const Chat = ({ chatId, user }) => {
 
   const newMessagesListener = useCallback((data) => {
     if (data.chatId !== chatId) return;
-
     setMessages((prev) => [...prev, data.message]);
   }, [chatId]);
 
@@ -118,7 +117,7 @@ const Chat = ({ chatId, user }) => {
     const messageForAlert = {
       content: data.message,
       sender: {
-        _id: "djasdhajksdhasdsadasdas",
+        _id: Math.random(),
         name: "Admin",
       },
       chat: chatId,
@@ -128,8 +127,8 @@ const Chat = ({ chatId, user }) => {
   }, [chatId]);
 
   const eventHandlers = {
-    [NEW_MESSAGE]: alertListener,
-    [ALERT]: newMessagesListener,
+    [NEW_MESSAGE]: newMessagesListener,
+    [ALERT]: alertListener,
     [START_TYPING]: startTypingListener,
     [STOP_TYPING]: stopTypingListener,
   };
@@ -138,7 +137,6 @@ const Chat = ({ chatId, user }) => {
   useErrors(errors);
 
   const allMessages = [...oldMessages, ...messages];
-  console.log(allMessages);
   return chatDetails.isLoading ? <Skeleton /> : (
     <Fragment>
       <Stack
