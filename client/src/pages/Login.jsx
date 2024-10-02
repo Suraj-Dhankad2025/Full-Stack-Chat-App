@@ -119,6 +119,10 @@ const Login = () => {
                         isLogin ? (
                             <>
                                 <Typography variant='h5'>
+                                Demo Username: suraj
+                                Demo Password: Suraj@2002
+                                </Typography>
+                                <Typography variant='h5'>
                                     Login
                                 </Typography>
                                 <form style={{
