@@ -99,6 +99,12 @@ const Login = () => {
         <div style={{
             background: bgGradient
         }}>
+            <Typography variant='h6' textAlign='center'>
+                Demo Username: suraj
+                <br />
+                Demo Password: Suraj@2002
+            </Typography>
+
             <Container component={"main"} maxWidth="xs"
                 sx={{
                     height: '100vh',
@@ -118,10 +124,6 @@ const Login = () => {
                     {
                         isLogin ? (
                             <>
-                                <Typography variant='h5'>
-                                Demo Username: suraj
-                                Demo Password: Suraj@2002
-                                </Typography>
                                 <Typography variant='h5'>
                                     Login
                                 </Typography>
